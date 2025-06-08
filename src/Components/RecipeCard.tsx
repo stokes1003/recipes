@@ -6,7 +6,9 @@ type RecipeCardProps = {
     id: number;
     title: string;
     category: string;
-    img: string;
+    img?: string;
+    ingredients?: string[];
+    instructions?: string[];
   };
 };
 
