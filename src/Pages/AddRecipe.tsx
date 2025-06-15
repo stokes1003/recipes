@@ -6,10 +6,10 @@ import {
   Input,
   FileInput,
   Button,
-  Container,
 } from "@mantine/core";
 import { useState } from "react";
 import { TiDelete } from "react-icons/ti";
+import { CiImageOn } from "react-icons/ci";
 export function AddRecipe() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -62,123 +62,123 @@ export function AddRecipe() {
       instructions,
     });
   };
+
+  const imageIcon = <CiImageOn />;
   return (
-    <Container size="lg">
-      <Stack align="center" my="xl" w="100%">
-        <Stack align="center" gap="lg" w="100%">
-          <Title order={2}>Add a Recipe</Title>
+    <Stack align="center" my="xl" gap="lg">
+      <Title order={2}>Add a Recipe</Title>
+      <Stack align="start" gap="lg">
+        <Stack gap="sm">
+          <Text fw={600}>Title</Text>
+          <Input
+            placeholder="Recipe Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            w={400}
+          />
+        </Stack>
+        <Stack gap="sm">
+          <Text fw={600}>Category</Text>
+          <Input
+            placeholder="Recipe Category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            w={400}
+          />
+        </Stack>
 
-          <Stack gap="sm">
-            <Text fw={600}>Title</Text>
-            <Input
-              placeholder="Recipe Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </Stack>
-          <Stack gap="sm">
-            <Text fw={600}>Category</Text>
-            <Input
-              placeholder="Recipe Category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            />
-          </Stack>
-
-          <Group>
-            <Text fw={600}>Image</Text>
-            <FileInput
-              placeholder="Upload Image"
-              value={image}
-              onChange={setImage}
-            />
-          </Group>
-          <Stack gap="sm">
-            <Text fw={600}>Ingredients</Text>
-            <Stack gap="xs">
-              {ingredients.map((ingredient, index) => (
-                <Group key={index} align="center">
-                  <Input
-                    placeholder="Input ingredient"
-                    value={ingredient}
-                    onFocus={() => setSelectedIngredient(index)}
-                    onBlur={() => setSelectedIngredient(null)}
+        <Group>
+          <Text fw={600}>Image</Text>
+          <FileInput
+            placeholder="Upload Image"
+            value={image}
+            onChange={setImage}
+            rightSection={imageIcon}
+            rightSectionPointerEvents="none"
+          />
+        </Group>
+        <Stack gap="sm">
+          <Text fw={600}>Ingredients</Text>
+          <Stack gap="xs">
+            {ingredients.map((ingredient, index) => (
+              <Group key={index} align="center">
+                <Input
+                  placeholder="Input ingredient"
+                  value={ingredient}
+                  onFocus={() => setSelectedIngredient(index)}
+                  onBlur={() => setSelectedIngredient(null)}
+                  style={{ cursor: "pointer" }}
+                  w={400}
+                  onChange={(e) => {
+                    const newIngredients = [...ingredients];
+                    newIngredients[index] = e.target.value;
+                    setIngredients(newIngredients);
+                  }}
+                />
+                {selectedIngredient === index && (
+                  <TiDelete
+                    color="red"
                     style={{ cursor: "pointer" }}
-                    onChange={(e) => {
-                      const newIngredients = [...ingredients];
-                      newIngredients[index] = e.target.value;
-                      setIngredients(newIngredients);
-                    }}
+                    onMouseDown={() => handleDeleteIngredient(index)}
+                    size="24"
                   />
-                  {selectedIngredient === index && (
-                    <TiDelete
-                      color="red"
-                      style={{ cursor: "pointer" }}
-                      onMouseDown={() => handleDeleteIngredient(index)}
-                      size="24"
-                    />
-                  )}
-                </Group>
-              ))}
+                )}
+              </Group>
+            ))}
 
-              <Text
-                c="blue"
-                style={{ cursor: "pointer" }}
-                onClick={handleAddIngredient}
-                size="sm"
-              >
-                Add Ingredient
-              </Text>
-            </Stack>
+            <Text
+              c="blue"
+              style={{ cursor: "pointer" }}
+              onClick={handleAddIngredient}
+              size="sm"
+            >
+              Add Ingredient
+            </Text>
           </Stack>
-          <Stack gap="sm">
-            <Text fw={600}>Instructions</Text>
-            <Stack gap="xs">
-              {instructions.map((instruction, index) => (
-                <Group key={index} align="center">
-                  <Input
-                    placeholder="Input Instructions"
-                    value={instruction}
-                    onFocus={() => setSelectedInstruction(index)}
-                    onBlur={() => setSelectedInstruction(null)}
+        </Stack>
+        <Stack gap="sm">
+          <Text fw={600}>Instructions</Text>
+          <Stack gap="xs">
+            {instructions.map((instruction, index) => (
+              <Group key={index} align="center">
+                <Input
+                  placeholder="Input Instructions"
+                  value={instruction}
+                  onFocus={() => setSelectedInstruction(index)}
+                  onBlur={() => setSelectedInstruction(null)}
+                  style={{ cursor: "pointer" }}
+                  w={400}
+                  onChange={(e) => {
+                    const newInstructions = [...instructions];
+                    newInstructions[index] = e.target.value;
+                    setInstructions(newInstructions);
+                  }}
+                />
+                {selectedInstruction === index && (
+                  <TiDelete
+                    color="red"
                     style={{ cursor: "pointer" }}
-                    onChange={(e) => {
-                      const newInstructions = [...instructions];
-                      newInstructions[index] = e.target.value;
-                      setInstructions(newInstructions);
-                    }}
+                    onMouseDown={() => handleDeleteInstruction(index)}
+                    size="24"
                   />
-                  {selectedInstruction === index && (
-                    <TiDelete
-                      color="red"
-                      style={{ cursor: "pointer" }}
-                      onMouseDown={() => handleDeleteInstruction(index)}
-                      size="24"
-                    />
-                  )}
-                </Group>
-              ))}
-              <Text
-                c="blue"
-                style={{ cursor: "pointer" }}
-                onClick={handleAddInstruction}
-                size="sm"
-              >
-                Add Instruction
-              </Text>
-            </Stack>
+                )}
+              </Group>
+            ))}
+            <Text
+              c="blue"
+              style={{ cursor: "pointer" }}
+              onClick={handleAddInstruction}
+              size="sm"
+            >
+              Add Instruction
+            </Text>
           </Stack>
-
-          <Button
-            variant="filled"
-            color="blue"
-            size="md"
-            onClick={handleSubmit}
-          >
-            Submit Recipe
-          </Button>
         </Stack>
       </Stack>
-    </Container>
+
+      <Button variant="filled" color="blue" size="md" onClick={handleSubmit}>
+        Submit Recipe
+      </Button>
+    </Stack>
   );
 }
