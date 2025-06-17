@@ -82,7 +82,7 @@ export function AddRecipe() {
 
   const uploadToImgur = async (imageFile: File): Promise<string> => {
     const formData = new FormData();
-    formData.append("image", imageFile); // must be 'image'
+    formData.append("image", imageFile);
 
     try {
       const response = await fetch("https://api.imgur.com/3/image", {
