@@ -10,6 +10,8 @@ import {
 import { useState } from "react";
 import { TiDelete } from "react-icons/ti";
 import { CiImageOn } from "react-icons/ci";
+
+const clientId = import.meta.env.VITE_IMGUR_CLIENT_ID;
 export function AddRecipe() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -54,16 +56,55 @@ export function AddRecipe() {
       setSelectedInstruction(selectedInstruction - 1);
     }
   };
-  const handleSubmit = () => {
-    console.log("Submitting recipe:", {
-      title,
-      category,
-      ingredients,
-      instructions,
-    });
+  const handleSubmit = async () => {
+    try {
+      const imgId = image ? await uploadToImgur(image) : null;
+      const imgURL = imgId ? `https://i.imgur.com/${imgId}.jpg` : null;
+
+      const newRecipe = {
+        title: title.trim(),
+        category: category.trim(),
+        img: imgURL || undefined,
+        ingredients: ingredients.filter((ing) => ing.trim() !== ""),
+        instructions: instructions.filter((inst) => inst.trim() !== ""),
+      };
+
+      console.log("Submitted Recipe:", newRecipe);
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("rate limit")) {
+        alert("Imgur is temporarily over capacity. Please try again later.");
+      }
+      console.error("Recipe submission failed:", err);
+    }
   };
 
   const imageIcon = <CiImageOn />;
+
+  const uploadToImgur = async (imageFile: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("image", imageFile); // must be 'image'
+
+    try {
+      const response = await fetch("https://api.imgur.com/3/image", {
+        method: "POST",
+        headers: {
+          Authorization: `Client-ID ${clientId}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.data?.error ?? "Imgur upload failed");
+      }
+
+      return data.data.id;
+    } catch (err) {
+      console.error("Image upload failed:", err);
+      throw err;
+    }
+  };
+
   return (
     <Stack align="center" my="xl" gap="lg">
       <Title order={2}>Add a Recipe</Title>
