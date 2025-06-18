@@ -69,12 +69,22 @@ export function AddRecipe() {
         instructions: instructions.filter((inst) => inst.trim() !== ""),
       };
 
+      await addRecipe(newRecipe);
+
       console.log("Submitted Recipe:", newRecipe);
     } catch (err) {
       if (err instanceof Error && err.message.includes("rate limit")) {
         alert("Imgur is temporarily over capacity. Please try again later.");
       }
       console.error("Recipe submission failed:", err);
+    } finally {
+      console.log("Recipe added successfully:");
+
+      setTitle("");
+      setCategory("");
+      setImage(null);
+      setIngredients(["", ""]);
+      setInstructions(["", ""]);
     }
   };
 
@@ -102,6 +112,33 @@ export function AddRecipe() {
     } catch (err) {
       console.error("Image upload failed:", err);
       throw err;
+    }
+  };
+
+  const addRecipe = async (recipe: {
+    title: string;
+    category: string;
+    img?: string;
+    ingredients: string[];
+    instructions: string[];
+  }) => {
+    try {
+      const response = await fetch("/.netlify/functions/addRecipe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(recipe),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error adding recipe: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Recipe added successfully:", data);
+    } catch (err) {
+      console.error("Failed to add recipe:", err);
     }
   };
 
